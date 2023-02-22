@@ -10,7 +10,7 @@ Bank::~Bank()
 
 }
 
-void Bank::main_terminal()
+void Bank::main_terminal() //t
 {   
     char input;
     do 

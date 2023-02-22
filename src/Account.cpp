@@ -3,7 +3,7 @@
 Account::Account(const std::string& surname, const std::string& name, const std::string& iban, const account_type& type)
 : surname(surname), name(name), iban(iban), balance(0), type(type)
 {
-    std::cout << "Created Account " << surname + name << std::endl;
+    std::cout << "Created Account " << surname + name << std::endl; //remove
 }
 
 Account::~Account()
