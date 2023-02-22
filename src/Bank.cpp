@@ -89,7 +89,7 @@ void Bank::create_new_account()
 
     std::string iban = generate_iban();
 
-   database.push_back(std::make_unique <Account>(surname, name, iban, type));
+    database.push_back(std::make_unique <Account>(surname, name, iban, type));
 
     std::cout << "New account " + surname + " " + name + " has been created.\n";
     getch();
@@ -186,7 +186,7 @@ void Bank::modify_account()
                             default:
                                 break;
                             }
-                        } while (input != '1' && input != '2');
+                        } while (case_4_input != '1' && case_4_input != '2');
                         break;
                     case '5':
                         std::cout << "Are you sure you want to delete this account?\n[y]Yes\n[n]No\n";
@@ -263,6 +263,8 @@ const std::string Bank::generate_iban()
                 bool unique_iban = false;
 
     } while(unique_iban == false);
+
+    //never use the same iban twice
 
     return generated_iban;
 }
