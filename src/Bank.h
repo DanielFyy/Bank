@@ -24,6 +24,7 @@ public:
     //save to CSV
 private:
     std::vector <std::unique_ptr<Account>> database;
+    std::vector <std::string> used_iban;
 };
 
 #endif

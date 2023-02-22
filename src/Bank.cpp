@@ -258,14 +258,14 @@ const std::string Bank::generate_iban()
         for (int i = 0; i < 15; i++) 
             generated_iban += std::to_string(number(rng));
 
-        for (const std::unique_ptr<Account>& account : database) 
-            if (generated_iban == account->get_iban()) 
-                bool unique_iban = false;
+        for (const std::string& iban : used_iban) 
+            if (generated_iban == iban) 
+            bool unique_iban = false;
 
     } while(unique_iban == false);
 
     //never use the same iban twice
-
+    used_iban.push_back(generated_iban);
     return generated_iban;
 }
 
