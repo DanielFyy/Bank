@@ -10,20 +10,18 @@ Bank::~Bank()
 
 }
 
-void Bank::main_terminal() //t
+void Bank::main_terminal()
 {   
     char input;
     do 
     {   
         clear_screen();
 
-        std::cout << "IT School Bank:\n[1]Number of accounts\n[2]Create New Account\n[3]Modify Existing Account\n[4]Exit\n";
+        std::cout << "IT School Bank:\n[1]Display registered accounts\n[2]Create New Account\n[3]Modify Existing Account\n[4]Exit\n";
         switch (getch())
         {
         case '1':
-            clear_screen();
-            std::cout << "Number of accounts: " << database.size() << std::endl;
-            getch();
+            display_accounts();
             break;
         case '2':
             create_new_account();
@@ -38,6 +36,19 @@ void Bank::main_terminal() //t
         }
     
     } while (true);
+}
+
+void Bank::display_accounts()
+{
+    clear_screen();
+    std::cout << "Number of accounts: " << database.size() << "\n";
+    if (database.size() > 0) 
+    {
+        std::cout << "Accounts:\n";
+        for (const std::unique_ptr<Account>& account : database)
+            std::cout << account->get_surname() + " " + account->get_name() + " " + account->get_iban() + "\n";
+    }
+    getch();
 }
 
 void Bank::create_new_account()
@@ -104,7 +115,8 @@ void Bank::modify_account()
         std::cout << "[1]Enter Account\n[2]Back\n";
         char input;
         do 
-        {   input = getch();
+        {   
+            input = getch();
             switch (input)
             {
             case '1':
@@ -125,6 +137,7 @@ void Bank::modify_account()
             surname[0] = toupper(surname[0]);
             for (int i = 1; i < surname.size(); i++) 
                 surname[i] = tolower(surname[i]);
+                
             std::string name;
             std::cin >> name;
             name[0] = toupper(name[0]);
@@ -133,88 +146,48 @@ void Bank::modify_account()
 
             
             bool end_loop = false;
-            do 
+            clear_screen();
+            for (const std::unique_ptr<Account>& account : database) 
+            if (account->get_surname() == surname && account->get_name() == name)  
             {   
-                clear_screen();
-                for (const std::unique_ptr<Account>& account : database) 
-                if (account->get_surname() == surname && account->get_name() == name)  
-                {   
-                    std::cout << "Account Name: " + surname + " " + name + "\nIBAN: " + account->get_iban() + "\nAccount Type: " + account->get_type_name() + "\nBalance: " << account->get_balance() << "\n[1]Modify Balance\n[2]Change Surname\n[3]Change Name\n[4]Change Type\n[5]Delete Account\n[6]Back\n";
+                do 
+                {
+                    std::cout << "Account Name: " + account->get_surname() + " " + account->get_name() + "\nIBAN: " + account->get_iban() + 
+                    "\nAccount Type: " + account->get_type_name() + "\nBalance: " << account->get_balance() << 
+                    "\n[1]Modify Balance\n[2]Change Surname\n[3]Change Name\n[4]Change Type\n[5]Delete Account\n[6]Back\n";
                     input = getch();    
                     switch (input)
                     {
                     case '1':
-                        clear_screen();
-                        std::cout << "\nModify Account Balance: ";
-                        int amount;
-                        std::cin >> amount;
-                        account->set_balance(account->get_balance() + amount);
-                        std::cout << "New Account Balance: " << account->get_balance() << "\n";
-                        getch();
+                        modify_balance(account);
                         break;
                     case '2':
-                        std::cout << "Enter new surname: ";
-                        std::cin >> surname;
-                        surname[0] = toupper(surname[0]);
-                        for (int i = 1; i < surname.size(); i++) 
-                            surname[i] = tolower(surname[i]);
-                        account->set_surname(surname);
+                        change_surname(account);
                         break;
                     case '3':
-                        std::cout << "Enter new name: ";
-                        std::cin >> name;
-                        name[0] = toupper(name[0]);
-                        for (int i = 1; i < name.size(); i++)
-                            name[i] = tolower(name[i]);
-                        account->set_name(name);
+                        change_name(account);
                         break;
                     case '4':
-                        std::cout << "Account Type:\n[1]lei\n[2]currency\n";
-                        account_type type;
-                        char case_4_input;
-                        do 
-                        {   
-                            case_4_input = getch();
-                            switch (case_4_input)
-                            {
-                            case '1':
-                                account->set_type(lei);
-                                break;
-                            case '2':
-                                account->set_type(currency);
-                                break;
-                            default:
-                                break;
-                            }
-                        } while (case_4_input != '1' && case_4_input != '2');
+                        change_type(account);
                         break;
                     case '5':
-                        std::cout << "Are you sure you want to delete this account?\n[y]Yes\n[n]No\n";
-                        switch (getch())
-                        {
-                        case 'y':
-                            delete_account(account);
-                            return;
-                        default:
-                            break;
-                        }
-                        break;
+                        delete_account(account);
+                        return;
                     case '6':
                         end_loop = true;
-                        return;
+                        break;
                     default:
                         break;
                     }
-                    break;
-                } 
-                else
-                {
-                    std::cout << "Account not found." << std::endl;
-                    getch();
-                    end_loop = true;
-                }
-                
-            } while (end_loop == false);
+                } while (end_loop == false);
+            }
+            else
+            {
+                std::cout << "Account not found." << std::endl;
+                getch();
+                end_loop = true;
+            }
+    
         }
         else
         {
@@ -228,25 +201,88 @@ void Bank::modify_account()
     
 }
 
+void Bank::change_surname(const std::unique_ptr<Account>& account)
+{   
+    clear_screen();
+    std::string surname;
+    std::cout << "Enter new surname: ";
+    std::cin >> surname;
+    surname[0] = toupper(surname[0]);
+    for (int i = 1; i < surname.size(); i++) 
+        surname[i] = tolower(surname[i]);
+    account->set_surname(surname);
+}
+
+void Bank::modify_balance(const std::unique_ptr<Account>& account)
+{
+    clear_screen();
+    std::cout << "\nModify Account Balance: ";
+    int amount;
+    std::cin >> amount;
+    account->set_balance(account->get_balance() + amount);
+    std::cout << "New Account Balance: " << account->get_balance() << "\n";
+    getch();
+}
+
+void Bank::change_name(const std::unique_ptr<Account>& account)
+{   
+    clear_screen();
+    std::string name;
+    std::cout << "Enter new name: ";
+    std::cin >> name;
+    name[0] = toupper(name[0]);
+    for (int i = 1; i < name.size(); i++)
+        name[i] = tolower(name[i]);
+    account->set_name(name);
+}
+
+void Bank::change_type(const std::unique_ptr<Account>& account)
+{
+    clear_screen();
+    std::cout << "Account Type:\n[1]lei\n[2]currency\n";
+    account_type type;
+    char case_4_input;
+    do 
+    {   
+        case_4_input = getch();
+        switch (case_4_input)
+        {
+        case '1':
+            account->set_type(lei);
+            break;
+        case '2':
+            account->set_type(currency);
+            break;
+        default:
+            break;
+        }
+    } while (case_4_input != '1' && case_4_input != '2');
+}
+
 void Bank::delete_account(const std::unique_ptr<Account>& account)
 {
     clear_screen();
-    for(int i = 0; i < database.size(); i++) 
+    std::cout << "Are you sure you want to delete this account?\n[y]Yes\n[n]No\n";
+    switch (getch())
     {
-        if (account == database[i]) 
-        {   
-            std::cout << "Deleted Account " + account->get_surname() + " " + account->get_name() + ".\n";
-            database[i].reset(nullptr);
-            database.erase(database.begin() + i);
-            getch();
-        }
+    case 'y':
+        for(int i = 0; i < database.size(); i++) 
+            if (account == database[i]) 
+            {   
+                std::cout << "Deleted Account " + account->get_surname() + " " + account->get_name() + ".\n";
+                database[i].reset();
+                database.erase(database.begin() + i);
+                getch();
+            }
+        return;
+    default:
+        break;
     }
-    
 }
 
 const std::string Bank::generate_iban()
 {   
-    std::string generated_iban = "ROITSCHOOL";
+    std::string generated_iban;
 
     std::random_device random;
     std::mt19937 rng(random());
@@ -264,7 +300,6 @@ const std::string Bank::generate_iban()
 
     } while(unique_iban == false);
 
-    //never use the same iban twice
     used_iban.push_back(generated_iban);
     return generated_iban;
 }
