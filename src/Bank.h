@@ -38,13 +38,5 @@ private:
     std::vector <std::string> unique_iban;
     CSV csv;
 };
-/*
-    To Do:
-    - Unique Iban CSV file
-    - Rewrite without unique pointers
-    - Rewrite menu navigation to be cleaner
-    - Implement all missing features
-
-*/
 
 #endif
