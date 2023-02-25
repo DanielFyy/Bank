@@ -3,12 +3,10 @@
 Account::Account(const std::string& surname, const std::string& name, const std::string& iban, const int& balance, const std::string& type)
 : surname(surname), name(name), iban(iban), balance(balance), type(type)
 {
-    std::cout << "Created Account" << std::endl;
 }
 
 Account::~Account()
 {
-    std::cout << "Destroyed Account" << std::endl;
 }
 
 void Account::set_surname(const std::string& surname)

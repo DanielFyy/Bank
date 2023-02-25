@@ -5,7 +5,6 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <array>
 #include <random>
 #include <memory>
 #include <fstream>
@@ -33,7 +32,6 @@ public:
     const int get_balance() const;
     const std::string get_type() const;
     
-
 private:
     std::string surname;
     std::string name;

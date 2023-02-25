@@ -28,7 +28,6 @@ void CSV::save_database(const std::vector <std::shared_ptr<Account>>& database)
 void CSV::load_database(std::vector <std::shared_ptr<Account>>& database)
 {
     std::fstream file;
-
     file.open("accounts.csv", std::ios::in);
     
     std::vector <std::string> data;
@@ -69,7 +68,6 @@ void CSV::save_ibans(const std::vector <std::string>& unique_ibans)
 void CSV::load_ibans(std::vector <std::string>& unique_ibans)
 {
     std::fstream file;
-
     file.open("ibans.csv", std::ios::in);
     
     std::vector <std::string> data;
