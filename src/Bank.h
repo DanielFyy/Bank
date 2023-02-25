@@ -2,38 +2,49 @@
 #define BANK_H
 
 #pragma once
-#include "Account.h"
+#include "CSV.h"
 
 class Bank
 {
 public:
     Bank();
     ~Bank();
-    void main_terminal();
 
-    void display_accounts();
-    //adds a new account object into database
-    void create_new_account(); 
-    //menu for modifying existing account
-    void modify_account();
+    void main_terminal(); //main screen of the application used to navigate the system
+    
+    void get_database(); //displays the number of accounts in database aswell as details about all existing accounts
 
-    void change_surname(const std::unique_ptr<Account>& account);
+    void create_new_account(); //adds a new account object into database
 
-    void modify_balance(const std::unique_ptr<Account>& account);
+    void login(); //login into an existing account
 
-    void change_name(const std::unique_ptr<Account>& account);
+    void account_balance(const std::shared_ptr<Account> account); //modifies the balance of an account
 
-    void change_type(const std::unique_ptr<Account>& account);
-    //deletes acccount of matching adress
-    void delete_account(const std::unique_ptr<Account>& account);
-    //generates a unique iban code
-    const std::string generate_iban(); 
-    //clears the console
-    void clear_screen();
-    //save to CSV
+    void modify_account(const std::shared_ptr<Account> account); //menu for modifying existing account
+
+    void change_surname(const std::shared_ptr<Account> account); //changes the surname of an account
+
+    void change_name(const std::shared_ptr<Account> account); //changes the name of an account
+
+    void change_type(const std::shared_ptr<Account> account); //changes the type of an account
+
+    void delete_account(const std::shared_ptr<Account> account); //deletes acccount of matching adress
+
+    const std::string generate_iban(); //generates a unique iban code
+
+    void clear_screen(); //clears the console
 private:
-    std::vector <std::unique_ptr<Account>> database;
-    std::vector <std::string> used_iban;
+    std::vector <std::shared_ptr<Account>> database;
+    std::vector <std::string> unique_iban;
+    CSV csv;
 };
+/*
+    To Do:
+    - Unique Iban CSV file
+    - Rewrite without unique pointers
+    - Rewrite menu navigation to be cleaner
+    - Implement all missing features
+
+*/
 
 #endif
