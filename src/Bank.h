@@ -33,6 +33,7 @@ public:
     const std::string generate_iban(); //generates a unique iban code
 
     void clear_screen(); //clears the console
+    
 private:
     std::vector <std::shared_ptr<Account>> database;
     std::vector <std::string> unique_ibans;
