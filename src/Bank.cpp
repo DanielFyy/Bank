@@ -88,13 +88,28 @@ void Bank::create_new_account()
     for (int i = 1; i < name.size(); i++)
         name[i] = tolower(name[i]);
 
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
     for (const std::shared_ptr<Account>& account : database) 
         if (account->get_surname() == surname && account->get_name() == name)  
-        {
+        {   
+            clear_screen();
             std::cout << "Account under the name " + surname + " " + name + " already exists.\n";
-            std::cout << "Do you wish to continue creating new account?\n";
-            getch();
-            return;
+            std::cout << "Do you still wish to continue creating new account?\n[1]Yes\n[2]No\n";
+            input = getch();
+            do 
+            {
+                switch (input)
+                {
+                case '1':
+                    break;
+                case '2':
+                    return;
+                default:
+                    break;
+                }
+            } while (input != '1');
+            break;
         }
     
     clear_screen();
@@ -165,40 +180,31 @@ void Bank::login()
             for (int i = 1; i < name.size(); i++)
                 name[i] = tolower(name[i]);
 
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+            std::string iban;
+            std::cout << "Enter IBAN: ";
+            while (iban.size() < 4) 
+            {
+                std::cin >> input;
+                if (isdigit(input))
+                    iban += input;
+            }
+
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
             bool match = false;
             for (const std::shared_ptr<Account>& account : database) 
-                if (account->get_surname() == surname && account->get_name() == name)
+                if (account->get_surname() == surname && account->get_name() == name && account->get_iban() == iban)
                 {   
                     match = true;
-                    clear_screen();
-                    std::string iban;
-                    std::cout << "Enter IBAN: ";
-                    while (iban.size() < 4) 
-                    {
-                        std::cin >> input;
-                        if (isdigit(input))
-                            iban += input;
-                    }
-                    if (iban == account->get_iban()) 
-                    {
-                        modify_account(account);
-                        break;
-                    }
-                    else 
-                    {   
-                        clear_screen();
-                        std::cout << "Invalid IBAN, please try again.\n";
-                        getch();
-                        break;
-                    }
-                        
+                    modify_account(account);
+                    break;
                 }
-                
             if (match == false)
             {   
                 clear_screen();
                 std::cout << "Account not found.\n";
-                std::cout << "Do you wish to create a new account?\n";
                 getch();
             }
         } 
@@ -229,11 +235,13 @@ void Bank::account_balance(const std::shared_ptr<Account> account)
         case '1':
             std::cout << "Enter amount to deposit: ";
             std::cin >> amount;
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             account->set_balance(account->get_balance() + abs(amount));
             break;
         case '2':
             std::cout << "Enter amount to withdraw: ";
             std::cin >> amount;
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             account->set_balance(account->get_balance() - abs(amount));
             break;
         case 'B':
@@ -290,10 +298,14 @@ void Bank::change_surname(const std::shared_ptr<Account> account)
     std::string surname;
     std::cout << "Enter new surname: ";
     std::cin >> surname;
+
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
     surname[0] = toupper(surname[0]);
     for (int i = 1; i < surname.size(); i++) 
         surname[i] = tolower(surname[i]);
     account->set_surname(surname);
+    
 
     csv.save_database(database);
 }
@@ -304,6 +316,9 @@ void Bank::change_name(const std::shared_ptr<Account> account)
     std::string name;
     std::cout << "Enter new name: ";
     std::cin >> name;
+
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    
     name[0] = toupper(name[0]);
     for (int i = 1; i < name.size(); i++)
         name[i] = tolower(name[i]);
