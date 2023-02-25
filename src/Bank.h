@@ -35,7 +35,7 @@ public:
     void clear_screen(); //clears the console
 private:
     std::vector <std::shared_ptr<Account>> database;
-    std::vector <std::string> unique_iban;
+    std::vector <std::string> unique_ibans;
     CSV csv;
 };
 

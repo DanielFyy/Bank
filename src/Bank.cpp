@@ -12,7 +12,8 @@ Bank::~Bank()
 
 void Bank::main_terminal()
 {   
-    csv.load_file(database);
+    csv.load_database(database);
+    csv.load_ibans(unique_ibans);
     char input;
     do 
     {   
@@ -37,7 +38,6 @@ void Bank::main_terminal()
         default:
             break;
         }
-    
     } while (true);
 }
 
@@ -118,11 +118,9 @@ void Bank::create_new_account()
 
     clear_screen();
     
-    std::string iban = generate_iban();
+    database.push_back(std::make_shared <Account>(surname, name, generate_iban(), 0, type));
 
-    database.push_back(std::make_shared <Account>(surname, name, iban, 0, type));
-
-    csv.save_file(database);
+    csv.save_database(database);
     
     std::cout << "New account " + surname + " " + name + " has been created.\n";
     getch();
@@ -246,7 +244,7 @@ void Bank::account_balance(const std::shared_ptr<Account> account)
     } while (true);
     
 
-    csv.save_file(database);
+    csv.save_database(database);
 }
 
 void Bank::modify_account(const std::shared_ptr<Account> account)
@@ -297,7 +295,7 @@ void Bank::change_surname(const std::shared_ptr<Account> account)
         surname[i] = tolower(surname[i]);
     account->set_surname(surname);
 
-    csv.save_file(database);
+    csv.save_database(database);
 }
 
 void Bank::change_name(const std::shared_ptr<Account> account)
@@ -311,7 +309,7 @@ void Bank::change_name(const std::shared_ptr<Account> account)
         name[i] = tolower(name[i]);
     account->set_name(name);
 
-    csv.save_file(database);
+    csv.save_database(database);
 }
 
 void Bank::change_type(const std::shared_ptr<Account> account)
@@ -336,7 +334,7 @@ void Bank::change_type(const std::shared_ptr<Account> account)
         }
     } while (case_4_input != '1' && case_4_input != '2');
 
-    csv.save_file(database);
+    csv.save_database(database);
 }
 
 void Bank::delete_account(const std::shared_ptr<Account> account)
@@ -353,7 +351,7 @@ void Bank::delete_account(const std::shared_ptr<Account> account)
                 std::cout << "Deleted Account " + account->get_surname() + " " + account->get_name() + ".\n";
                 database[i].reset();
                 database.erase(database.begin() + i);
-                csv.save_file(database);
+                csv.save_database(database);
                 getch();
             }
         return;
@@ -365,25 +363,31 @@ void Bank::delete_account(const std::shared_ptr<Account> account)
 
 const std::string Bank::generate_iban()
 {   
-    std::string generated_iban;
-
+    
     std::random_device random;
     std::mt19937 rng(random());
     std::uniform_int_distribution<std::mt19937::result_type> number(0,9);
 
-    bool is_unique = true;
+    std::string generated_iban;
+    bool is_unique;
+
     do 
-    {
-        for (int i = 0; i < 4; i++) 
+    {   
+        generated_iban.clear();
+        is_unique = true;
+
+        for (int i = 0; i < 4; i++)
             generated_iban += std::to_string(number(rng));
-
-        for (const std::string& iban : unique_iban) 
+        for (const std::string& iban : unique_ibans) 
             if (generated_iban == iban) 
-            bool is_unique = false;
+            {
+                is_unique = false;
+                break;
+            } 
+    } while (is_unique == false);
 
-    } while(is_unique == false);
-
-    unique_iban.push_back(generated_iban);
+    unique_ibans.push_back(generated_iban);
+    csv.save_ibans(unique_ibans);
     return generated_iban;
 }
 

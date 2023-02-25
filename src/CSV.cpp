@@ -10,7 +10,7 @@ CSV::~CSV()
 
 }
 
-void CSV::save_file(const std::vector <std::shared_ptr<Account>>& database)
+void CSV::save_database(const std::vector <std::shared_ptr<Account>>& database)
 {   
     std::fstream file;
     file.open("accounts.csv", std::ios::out);
@@ -25,7 +25,7 @@ void CSV::save_file(const std::vector <std::shared_ptr<Account>>& database)
     file.close();
 }
 
-void CSV::load_file(std::vector <std::shared_ptr<Account>>& database)
+void CSV::load_database(std::vector <std::shared_ptr<Account>>& database)
 {
     std::fstream file;
 
@@ -49,6 +49,36 @@ void CSV::load_file(std::vector <std::shared_ptr<Account>>& database)
         database.push_back(std::make_unique<Account>(data[0 + x], data[1 + x], data[2 + x], stoi(data[3 + x]), data[4 + x]));
         x += 5;
     }
+
+    file.close();
+}
+
+void CSV::save_ibans(const std::vector <std::string>& unique_ibans)
+{
+    std::fstream file;
+    file.open("ibans.csv", std::ios::out);
+
+    for (const std::string& iban : unique_ibans) 
+    {
+        file << iban + "\n";
+    }   
+
+    file.close();
+}
+
+void CSV::load_ibans(std::vector <std::string>& unique_ibans)
+{
+    std::fstream file;
+
+    file.open("ibans.csv", std::ios::in);
+    
+    std::vector <std::string> data;
+    std::string iban;
+    while (std::getline(file, iban)) 
+        data.push_back(iban); 
+
+    for (int i = 0; i < data.size(); i++) 
+        unique_ibans.push_back(data[i]);
 
     file.close();
 }
