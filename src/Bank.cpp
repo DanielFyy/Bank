@@ -355,7 +355,7 @@ void Bank::change_type(Account* const account)
 }
 
 void Bank::delete_account(Account* const account)
-{
+{   
     clear_screen();
     std::cout << "Are you sure you want to delete this account?\n[Y]Yes\n[N]No\n";
     char input;
