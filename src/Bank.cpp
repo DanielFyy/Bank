@@ -138,7 +138,6 @@ void Bank::create_new_account()
     clear_screen();
     
     database.push_back(new Account(surname, name, generate_iban(), 0, type));
-
     csv.save_database(database);
     
     std::cout << "New account " + surname + " " + name + " has been created.\n";
