@@ -95,20 +95,22 @@ void Bank::create_new_account()
         {   
             clear_screen();
             std::cout << "Account under the name " + surname + " " + name + " already exists.\n";
-            std::cout << "Do you still wish to continue creating new account?\n[1]Yes\n[2]No\n";
+            std::cout << "Do you still wish to continue creating new account?\n[Y]Yes\n[N]No\n";
             input = getch();
+            if (isalpha(input))
+                input = toupper(input);
             do 
             {
                 switch (input)
                 {
-                case '1':
+                case 'Y':
                     break;
-                case '2':
+                case 'N':
                     return;
                 default:
                     break;
                 }
-            } while (input != '1');
+            } while (input != 'Y');
             break;
         }
     
@@ -355,10 +357,14 @@ void Bank::change_type(const std::shared_ptr<Account> account)
 void Bank::delete_account(const std::shared_ptr<Account> account)
 {
     clear_screen();
-    std::cout << "Are you sure you want to delete this account?\n[y]Yes\n[n]No\n";
-    switch (getch())
+    std::cout << "Are you sure you want to delete this account?\n[Y]Yes\n[N]No\n";
+    char input;
+    input = getch();
+    if (isalpha(input))
+            input = toupper(input);
+    switch (input)
     {
-    case 'y':
+    case 'Y':
         for(int i = 0; i < database.size(); i++) 
             if (account == database[i]) 
             {   
