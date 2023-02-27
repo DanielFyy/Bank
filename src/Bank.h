@@ -11,9 +11,9 @@ public:
     ~Bank();
 
     void main_terminal(); //main screen of the application used to navigate the system
-    void get_database(); //displays the number of accounts in database aswell as details about all existing accounts
+    void get_database(); //displays the number of accounts in database as well as details about all existing accounts
     void create_new_account(); //adds a new account object into database
-    void login(); //login into an existing account
+    void login(); //find  existing account
     void account_balance(Account* const account); //modifies the balance of an account
     void modify_account(Account* const account); //menu for modifying existing account
     void change_surname(Account* const account); //changes the surname of an account
