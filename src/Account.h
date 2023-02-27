@@ -19,13 +19,11 @@ public:
     Account(const std::string& surname, const std::string& name, const std::string& iban, const int& balance, const std::string& type);
     ~Account();
 
-    //setters
     void set_surname(const std::string& surname);
     void set_name(const std::string& name);
     void set_balance(const int& balance);
     void set_type(const std::string& type);
 
-    //getters
     const std::string get_surname() const;
     const std::string get_name() const;
     const std::string get_iban() const;
