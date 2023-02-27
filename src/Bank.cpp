@@ -16,6 +16,7 @@ void Bank::main_terminal()
 {   
     csv.load_database(database);
     csv.load_ibans(unique_ibans);
+    
     char input;
     do 
     {   
@@ -182,6 +183,8 @@ void Bank::login()
             name[0] = toupper(name[0]);
             for (int i = 1; i < name.size(); i++)
                 name[i] = tolower(name[i]);
+
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
             std::string iban;
             std::cout << "Enter IBAN: ";
