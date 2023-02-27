@@ -16,7 +16,7 @@ void Bank::main_terminal()
 {   
     csv.load_database(database);
     csv.load_ibans(unique_ibans);
-    
+
     char input;
     do 
     {   
@@ -137,12 +137,21 @@ void Bank::create_new_account()
     } while (input != '1' && input != '2');
 
     clear_screen();
-    
-    database.push_back(new Account(surname, name, generate_iban(), 0, type));
-    csv.save_database(database);
-    
-    std::cout << "New account " + surname + " " + name + " has been created.\n";
-    getch();
+    const std::string iban = generate_iban();
+    if (iban != "0") 
+    {
+        database.push_back(new Account(surname, name, iban, 0, type));
+        csv.save_database(database);
+        
+        std::cout << "New account " + surname + " " + name + " has been created.\n";
+        getch();
+    } 
+    else 
+    {
+        std::cout << "Cannot create new account." << std::endl;
+        getch();
+    }
+        
 }
 
 void Bank::login()
@@ -386,33 +395,38 @@ void Bank::delete_account(Account* const account)
 
 const std::string Bank::generate_iban()
 {   
+    if (unique_ibans.size() < 10000) 
+    {
+        std::random_device random;
+        std::mt19937 rng(random());
+        std::uniform_int_distribution<std::mt19937::result_type> number(0,9);
+
+        std::string generated_iban;
+        bool is_unique;
+
+        do 
+        {   
+            generated_iban.clear();
+            is_unique = true;
+
+            for (int i = 0; i < 4; i++)
+                generated_iban += std::to_string(number(rng));
+            for (const std::string& iban : unique_ibans) 
+                if (generated_iban == iban) 
+                {
+                    is_unique = false;
+                    break;
+                } 
+        } while (is_unique == false);
+
+        unique_ibans.push_back(generated_iban);
+        csv.save_ibans(unique_ibans);
+        
+        return generated_iban;
+    }
+    else
+        return "0";
     
-    std::random_device random;
-    std::mt19937 rng(random());
-    std::uniform_int_distribution<std::mt19937::result_type> number(0,9);
-
-    std::string generated_iban;
-    bool is_unique;
-
-    do 
-    {   
-        generated_iban.clear();
-        is_unique = true;
-
-        for (int i = 0; i < 4; i++)
-            generated_iban += std::to_string(number(rng));
-        for (const std::string& iban : unique_ibans) 
-            if (generated_iban == iban) 
-            {
-                is_unique = false;
-                break;
-            } 
-    } while (is_unique == false);
-
-    unique_ibans.push_back(generated_iban);
-    csv.save_ibans(unique_ibans);
-    
-    return generated_iban;
 }
 
 void Bank::clear_screen()
