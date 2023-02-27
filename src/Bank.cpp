@@ -7,7 +7,9 @@ Bank::Bank()
 
 Bank::~Bank()
 {
-
+    for (Account*& account : database)
+        delete account;
+    database.clear();
 }
 
 void Bank::main_terminal()
@@ -46,7 +48,7 @@ void Bank::get_database()
     clear_screen();
     std::cout << "Number of accounts: " << database.size() << "\n";
     if (database.size() > 0) 
-        for (const std::shared_ptr<Account>& account : database)
+        for (const Account* account : database)
             std::cout << account->get_surname() + " " + account->get_name() + " " + account->get_iban() + "\n";
     getch();
 }
@@ -90,7 +92,7 @@ void Bank::create_new_account()
 
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-    for (const std::shared_ptr<Account>& account : database) 
+    for (const Account* const account : database) 
         if (account->get_surname() == surname && account->get_name() == name)  
         {   
             clear_screen();
@@ -135,7 +137,7 @@ void Bank::create_new_account()
 
     clear_screen();
     
-    database.push_back(std::make_shared <Account>(surname, name, generate_iban(), 0, type));
+    database.push_back(new Account(surname, name, generate_iban(), 0, type));
 
     csv.save_database(database);
     
@@ -182,8 +184,6 @@ void Bank::login()
             for (int i = 1; i < name.size(); i++)
                 name[i] = tolower(name[i]);
 
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
             std::string iban;
             std::cout << "Enter IBAN: ";
             while (iban.size() < 4) 
@@ -196,7 +196,7 @@ void Bank::login()
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
             bool match = false;
-            for (const std::shared_ptr<Account>& account : database) 
+            for (Account* account : database) 
                 if (account->get_surname() == surname && account->get_name() == name && account->get_iban() == iban)
                 {   
                     match = true;
@@ -219,7 +219,7 @@ void Bank::login()
     } while (true);
 }
 
-void Bank::account_balance(const std::shared_ptr<Account> account)
+void Bank::account_balance(Account* const account)
 {
     
     int amount;
@@ -257,7 +257,7 @@ void Bank::account_balance(const std::shared_ptr<Account> account)
     csv.save_database(database);
 }
 
-void Bank::modify_account(const std::shared_ptr<Account> account)
+void Bank::modify_account(Account* const account)
 {   
     char input;
     do 
@@ -294,7 +294,7 @@ void Bank::modify_account(const std::shared_ptr<Account> account)
     } while (true);
 }
 
-void Bank::change_surname(const std::shared_ptr<Account> account)
+void Bank::change_surname(Account* const account)
 {   
     clear_screen();
     std::string surname;
@@ -312,7 +312,7 @@ void Bank::change_surname(const std::shared_ptr<Account> account)
     csv.save_database(database);
 }
 
-void Bank::change_name(const std::shared_ptr<Account> account)
+void Bank::change_name(Account* const account)
 {   
     clear_screen();
     std::string name;
@@ -329,7 +329,7 @@ void Bank::change_name(const std::shared_ptr<Account> account)
     csv.save_database(database);
 }
 
-void Bank::change_type(const std::shared_ptr<Account> account)
+void Bank::change_type(Account* const account)
 {
     clear_screen();
     std::cout << "Account Type:\n[1]lei\n[2]currency\n";
@@ -354,7 +354,7 @@ void Bank::change_type(const std::shared_ptr<Account> account)
     csv.save_database(database);
 }
 
-void Bank::delete_account(const std::shared_ptr<Account> account)
+void Bank::delete_account(Account* const account)
 {
     clear_screen();
     std::cout << "Are you sure you want to delete this account?\n[Y]Yes\n[N]No\n";
@@ -370,7 +370,7 @@ void Bank::delete_account(const std::shared_ptr<Account> account)
             {   
                 clear_screen();
                 std::cout << "Deleted Account " + account->get_surname() + " " + account->get_name() + ".\n";
-                database[i].reset();
+                delete database[i];
                 database.erase(database.begin() + i);
                 csv.save_database(database);
                 getch();

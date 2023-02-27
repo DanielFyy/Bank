@@ -10,12 +10,12 @@ CSV::~CSV()
 
 }
 
-void CSV::save_database(const std::vector <std::shared_ptr<Account>>& database)
+void CSV::save_database(const std::vector <Account*>& database)
 {   
     std::fstream file;
     file.open("accounts.csv", std::ios::out);
 
-    for (const std::shared_ptr<Account>& account : database) 
+    for (const Account* account : database) 
     {
         file << account->get_surname() + "," 
         + account->get_name() + "," + account->get_iban() + ","
@@ -25,7 +25,7 @@ void CSV::save_database(const std::vector <std::shared_ptr<Account>>& database)
     file.close();
 }
 
-void CSV::load_database(std::vector <std::shared_ptr<Account>>& database)
+void CSV::load_database(std::vector <Account*>& database)
 {
     std::fstream file;
     file.open("accounts.csv", std::ios::in);
@@ -45,7 +45,7 @@ void CSV::load_database(std::vector <std::shared_ptr<Account>>& database)
     int x = 0;
     for (int i = 0; i < data.size() / 5; i++) 
     {   
-        database.push_back(std::make_unique<Account>(data[0 + x], data[1 + x], data[2 + x], stoi(data[3 + x]), data[4 + x]));
+        database.push_back(new Account(data[0 + x], data[1 + x], data[2 + x], stoi(data[3 + x]), data[4 + x]));
         x += 5;
     }
 
