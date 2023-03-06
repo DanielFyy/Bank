@@ -7,7 +7,7 @@ Bank::Bank()
 
 Bank::~Bank()
 {
-    for (Account*& account : database)
+    for (Account* account : database)
         delete account;
     database.clear();
 }
